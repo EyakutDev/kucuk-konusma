@@ -71,7 +71,16 @@ export function Chat(props: {
   useLayoutEffect(() => {
     const el = msgsRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [chat.items.length, typing]);
+  }, [chat.items.length, typing, warn]);
+
+  // When the keyboard opens the message list shrinks; keep the latest message in view.
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const keepBottom = () => { const el = msgsRef.current; if (el) el.scrollTop = el.scrollHeight; };
+    vv.addEventListener("resize", keepBottom);
+    return () => vv.removeEventListener("resize", keepBottom);
+  }, []);
 
   // Replay the topic flip when the topic changes (not on first render).
   const firstTopic = useRef(true);
@@ -114,7 +123,7 @@ export function Chat(props: {
         </div>
         <div className={`topic${quiet ? " quiet" : ""}`} ref={topicRef}>
           <div className="topic-text">
-            <span className="label">Konu</span>
+            <span className="label">Örnek konu</span>
             <p>{chat.topic}</p>
             {quiet && <p className="quiet-hint"><i />Biraz sessiz kaldınız. Yeni bir konu?</p>}
           </div>
@@ -136,16 +145,18 @@ export function Chat(props: {
       </div>
 
       <div className="pad chat-foot">
-        {warn && !chat.want && !capped && <p className="nudge">Süre bitiyor. Devam etmek istiyorsan anahtarı aç.</p>}
-        <button className="extend" aria-pressed={chat.want} disabled={capped} onClick={() => props.onWant(!chat.want)}>
-          {Icons.clockPlus}
-          <span className="t">
-            <b>{capped ? "Uzatma hakkı doldu" : chat.want ? "Devam etmek istiyorsun" : "Devam etmek isterim"}</b>
-            <small>{capped ? "Bu sohbetin son turu" : chat.want ? "Süre bitene kadar kapatabilirsin" : "Karşı taraf bu seçimini görmez"}</small>
-          </span>
-          <span className="count">{chat.ext}/{chat.maxExt}</span>
-          <span className="switch" aria-hidden="true" />
-        </button>
+        {/* The extension choice only appears in the last 30 seconds, as one compact row. */}
+        {warn && !capped && (
+          <button className="extend-mini" aria-pressed={chat.want} onClick={() => props.onWant(!chat.want)}>
+            {Icons.clockPlus}
+            <span className="t">
+              <b>{chat.want ? "Devam etmek istiyorsun" : "Devam etmek ister misin?"}</b>
+              <small>Karşı taraf seçimini görmez · {chat.ext}/{chat.maxExt}</small>
+            </span>
+            <span className="switch" aria-hidden="true" />
+          </button>
+        )}
+        {warn && capped && <p className="last-round">Son tur · uzatma hakkı doldu</p>}
         <form className="composer" onSubmit={submit}>
           <div className="wrap">
             <input

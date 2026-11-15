@@ -378,3 +378,53 @@ html, body, #root { height: 100%; }
 .pad { padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
 .conn { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 20; padding: 6px 12px; border-radius: 14px; background: var(--fg); color: var(--surface); font-size: 12.5px; font-weight: 500; white-space: nowrap; }
 .banned { margin: 0; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); color: var(--danger); font-size: 13px; }
+
+/* ===== Extension prompt: only in the last 30 s, one compact row ===== */
+.extend-mini {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px 8px 12px;
+  border: 0; border-radius: 16px; background: var(--accent-soft); color: var(--fg); text-align: left;
+  animation: slideUp .25s ease-out; flex: none;
+}
+.extend-mini > svg { width: 20px; height: 20px; flex: none; color: var(--accent); }
+.extend-mini .t { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+.extend-mini b { font-size: 14px; font-weight: 600; }
+.extend-mini small { font-size: 11.5px; color: var(--muted); }
+.extend-mini .switch { position: relative; width: 42px; height: 25px; flex: none; border-radius: 13px; background: color-mix(in srgb, var(--accent) 25%, var(--line)); transition: background-color .2s; }
+.extend-mini .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 19px; height: 19px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: transform .2s cubic-bezier(.2,.8,.2,1); }
+.extend-mini[aria-pressed="true"] .switch { background: var(--accent); }
+.extend-mini[aria-pressed="true"] .switch::after { transform: translateX(17px); }
+@keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.last-round { margin: 0; text-align: center; font-size: 12.5px; color: var(--muted); flex: none; }
+
+/* ===== Phones: fit the app to the visible screen (keyboard aware) ===== */
+@media (max-width: 559px) {
+  html, body { overflow: hidden; overscroll-behavior: none; }
+  .app {
+    position: fixed; left: 0; right: 0; top: var(--vv-top, 0px); height: var(--vv-h, 100%);
+    padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .kb .app { padding-bottom: 0; }
+}
+
+/* ===== Compact chat: small screens or keyboard open ===== */
+.kb .chat-top { padding-top: 8px; gap: 8px; }
+.kb .chat-top .chat-head { gap: 10px; }
+.kb .chat-top .chat-head .avatar { width: 32px; height: 32px; font-size: 12px; }
+.kb .chat-top .who b { font-size: 14.5px; }
+.kb .chat-top .who small { display: none; }
+.kb .chat-top .clock { font-size: 14px; padding: 4px 9px; border-radius: 9px; }
+.kb .chat-top .menu-btn { width: 32px; height: 32px; border-radius: 9px; }
+.kb .chat-top .bar { height: 3px; }
+.kb .chat-top .topic { padding: 6px 6px 6px 12px; border-radius: 14px; gap: 8px; }
+.kb .chat-top .topic .label { display: none; }
+.kb .chat-top .topic-text p { margin: 0; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kb .chat-top .topic-text p:first-of-type::before { content: "Örnek: "; color: var(--accent); }
+.kb .chat-top .topic button { width: 30px; height: 30px; border-radius: 9px; }
+.kb .chat-top .topic button svg { width: 15px; height: 15px; }
+.kb .quiet-hint { display: none !important; }
+.kb .msgs { padding-top: 8px; }
+.kb .chat-foot { padding-top: 4px; padding-bottom: 8px; gap: 6px; }
+.kb .extend-mini { padding: 6px 8px 6px 10px; border-radius: 14px; }
+.kb .extend-mini small { display: none; }
+.kb .composer .input { height: 44px; border-radius: 22px; }
+.kb .composer .send { top: 4px; right: 4px; width: 36px; height: 36px; }

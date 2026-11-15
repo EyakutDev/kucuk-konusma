@@ -83,9 +83,9 @@ export function Wait({ me, topic, partner, onCancel }: { me: Profile; topic: str
             <p className="wait-tip">{partner ? "Sohbet başlıyor." : "Rastgele biriyle eşleşeceksin."}</p>
           </div>
           <div className="cell span2 topic-cell">
-            <span className="label">İlk konun</span>
+            <span className="label">Örnek konu</span>
             <p>{topic}</p>
-            <small>Cevabını şimdiden düşünebilirsin.</small>
+            <small>İstersen bununla başla, istersen başka bir şeyden konuş.</small>
           </div>
           <div className="cell tip-cell">
             {Icons.eyeOff}
