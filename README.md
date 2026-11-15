@@ -91,7 +91,7 @@ Uygulama `http://SUNUCU_IP:3000` adresinde açılır. Durumu kontrol etmek için
 
 ```bash
 docker compose ps
-docker compose logs -f app
+docker compose logs -f kucuk-konusma
 curl http://localhost:3000/api/health
 ```
 
@@ -123,6 +123,30 @@ kucukkonusma.com {
 ```
 
 Bu durumda `.env` dosyasında `TRUST_PROXY=1` yap (kullanıcıların gerçek IP adresi doğru okunsun) ve 3000 portunu dışarıya kapat.
+
+### Sunucuda zaten Docker içinde bir Caddy varsa
+
+Uygulamayı o Caddy'nin Docker ağına bağla. Depoya girmeyen, sadece sunucuya özel bir `docker-compose.override.yml` dosyası oluştur (Compose bunu otomatik okur):
+
+```yaml
+services:
+  kucuk-konusma:
+    networks: [default, edge]
+networks:
+  edge:
+    external: true
+    name: CADDY_AGININ_ADI   # örn. docker inspect ile bulunan ağ adı
+```
+
+Caddyfile'a eklenecek blok:
+
+```
+kucukkonusma.ornek.com {
+    reverse_proxy kucuk-konusma:3000
+}
+```
+
+Alan adı yoksa ücretsiz [sslip.io](https://sslip.io) kullanılabilir: `kucukkonusma.1-2-3-4.sslip.io` adresi `1.2.3.4` IP'sine gider ve Caddy bunun için de sertifika alır.
 
 ## Ayarlar
 

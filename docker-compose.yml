@@ -1,5 +1,7 @@
 services:
-  app:
+  # Service name doubles as the DNS name on shared Docker networks, so keep it unique
+  # (a generic name like "app" can collide with other projects behind the same proxy).
+  kucuk-konusma:
     build: .
     restart: unless-stopped
     env_file: .env
